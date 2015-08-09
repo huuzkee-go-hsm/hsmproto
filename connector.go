@@ -11,9 +11,9 @@ type Connector struct {
 }
 
 const ( 
-	SIG_init 	= (99 + iota)
-	SIG_enter 	 
-	SIG_exit 	 
+	SIG_Init 	= (99 + iota)
+	SIG_Enter 	 
+	SIG_Exit 	 
 )
 
 func InitConnector() Connector {
@@ -26,6 +26,6 @@ func InitConnector() Connector {
 	ch_enter 	= make (chan int)
 	ch_exit 	= make (chan int)
 
-	return Connector{ ch_init, ch_enter, ch_exit, SIG_init, SIG_enter, SIG_exit }
+	return Connector{ ch_init, ch_enter, ch_exit, SIG_Init, SIG_Enter, SIG_Exit }
 
 }

@@ -34,6 +34,6 @@ func main() {
         
         con = hsmproto.InitConnector()
 
-	fmt.Printf("Hello World !  MessageType:  %v MessageCount: %v \n", con.MsgType , 3 )
+	fmt.Printf("Hello World !  MessageCls:  %v MessageType:  %v MessageCount: %v \n", con.MsgCls , con.MsgType, con.MsgCount )
 }
 
