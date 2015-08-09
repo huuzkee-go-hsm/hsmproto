@@ -1,7 +1,7 @@
 package hsmproto
 
 
-type connector struct {
+type Connector struct {
  	init       chan int
 	enter      chan int
 	exit       chan int
@@ -14,7 +14,7 @@ const (
 	SIG_exit 	= (1<iota)
 )
 
-func initConnector() connector {
+func InitConnector() Connector {
 
 	var ch_init        chan int
 	var ch_enter       chan int
@@ -24,6 +24,6 @@ func initConnector() connector {
 	ch_enter 	= make (chan int)
 	ch_exit 	= make (chan int)
 
-	return connector{ ch_init, ch_enter, ch_exit, 0}
+	return Connector{ ch_init, ch_enter, ch_exit, 0}
 
 }
