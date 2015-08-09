@@ -1,6 +1,10 @@
 package main
 
-import (		"fmt"   )
+import (		
+		
+		"fmt"   
+		"github.com/huuzkee-go-hsm/hsmproto"
+)
 
 //var rootDir string = "./testData"
 //type FileHash struct {
@@ -26,7 +30,10 @@ func main() {
 		encrypt := *encrptPtr
 	*/ //I am not including bakcup run time since
 
+        var con connector
+        
+        con = initConnector()
 
-	fmt.Printf("Hello World !  Call:  %v of %v \n", 1, 3 )
+	fmt.Printf("Hello World !  Call:  %v of %v \n", con.msg-typ , 3 )
 }
 
