@@ -30,10 +30,10 @@ func main() {
 		encrypt := *encrptPtr
 	*/ //I am not including bakcup run time since
 
-        var con connector
+        var con hsmproto.Connector
         
-        con = initConnector()
+        con = hsmproto.InitConnector()
 
-	fmt.Printf("Hello World !  Call:  %v of %v \n", con.msg-typ , 3 )
+	fmt.Printf("Hello World !  MessageType:  %v MessageCount: %v \n", con.MsgType , 3 )
 }
 

@@ -2,10 +2,10 @@ package hsmproto
 
 
 type Connector struct {
- 	init       chan int
-	enter      chan int
-	exit       chan int
-	msgtyp     int
+ 	Init       chan int
+	Enter      chan int
+	Exit       chan int
+	MsgType     int
 }
 
 const ( 
