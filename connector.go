@@ -5,13 +5,15 @@ type Connector struct {
  	Init       chan int
 	Enter      chan int
 	Exit       chan int
-	MsgType     int
+	MsgCls     int
+	MsgType    int
+	MsgCount   int
 }
 
 const ( 
-	SIG_init 	= (1<iota)
-	SIG_enter 	= (1<iota)
-	SIG_exit 	= (1<iota)
+	SIG_init 	= (99 + iota)
+	SIG_enter 	 
+	SIG_exit 	 
 )
 
 func InitConnector() Connector {
@@ -24,6 +26,6 @@ func InitConnector() Connector {
 	ch_enter 	= make (chan int)
 	ch_exit 	= make (chan int)
 
-	return Connector{ ch_init, ch_enter, ch_exit, 0}
+	return Connector{ ch_init, ch_enter, SIG_init, SIG_enter, SIG_exit }
 
 }
