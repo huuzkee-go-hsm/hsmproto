@@ -26,6 +26,6 @@ func InitConnector() Connector {
 	ch_enter 	= make (chan int)
 	ch_exit 	= make (chan int)
 
-	return Connector{ ch_init, ch_enter, SIG_init, SIG_enter, SIG_exit }
+	return Connector{ ch_init, ch_enter, ch_exit, SIG_init, SIG_enter, SIG_exit }
 
 }
