@@ -4,10 +4,12 @@ package hsmproto
 
 const ( 
  	HSM_SYSSTAT_NULL     = (0 + iota)		// NULL PSEUDO STATE
- 	HSM_SYSSTAT_ACTIVATE				// NULL PSEUDO STATE
  	HSM_SYSSTAT_LIVE				// NULL PSEUDO STATE
- 	HSM_SYSSTAT_DEACTIVATE 			      	// NULL PSEUDO STATE
  	HSM_SYSSTAT_DEAD 			      	// NULL PSEUDO STATE
+ 	HSM_SYSSTAT_ACTIVATE				// NULL PSEUDO STATE
+
+ 	HSM_SYSSTAT_DEACTIVATE 			      	// NULL PSEUDO STATE
+
  	//------------------------------------------------------------------
  	HSM_SYSSTAT_INITIALISING	        	// NULL PSEUDO STATE
  	//------------------------------------------------------------------
@@ -33,6 +35,8 @@ const (
    	HSM_SYSSTAT_CONFIG		      		// NULL PSEUDO STATE
   	HSM_SYSSTAT_COMMITCONFIG		      	// NULL PSEUDO STATE
  	//------------------------------------------------------------------
+ 	HSM_SYSSTAT_CURRENTSTATE      			// NULL PSEUDO STATE
+ 	//------------------------------------------------------------------
  	HSM_SYSSTAT_TOP		      			// NULL PSEUDO STATE
  	HSM_SYSSTAT_USER		      		// NULL PSEUDO STATE
 )
@@ -45,12 +49,23 @@ type HsmState interface {
 	AcceptState () int
 
 }
-type HsmEngine struct {
+type HsmActor struct {
 
 	LastState 	HsmState 
 	CurrentState 	HsmState 
+
 	
 }
+
+func ( hsmengine HsmActor) Live()  {
+
+	state := HSM_SYSSTAT_NULL
+	for state != HSM_SYSSTAT_DEAD {
+		state += 1
+	}
+
+    
+} 
 
 
 //////
