@@ -25,28 +25,40 @@ const (
 
 /////
 
-type HsmState interface {
 
-	AcceptState () int
+type HsmStateFrame interface {
+
+	getLastState () int
+	setLastState ( state int ) 
+	getCurrentState () int
+	setCurrentState ( state int ) 
 
 }
 
-type HsmActor struct {
+type HsmActor interface {
+
+	HsmStateFrame 
+
+}
+
+//--- HsmActorBase ---------------------------------------------------------//
+
+type HsmActorBase struct {
 
 	LastState 	int
 	CurrentState 	int
-	State		HsmState
-	
+		
 }
 
-func ( hsa HsmActor) Initialise()  {
+func ( hsa HsmActorBase) getLastState () int  {  return hsa.LastState }
 
-	hsa.LastState 		= HSM_SYSSTAT_NULL
-	hsa.CurrentState	= HSM_SYSSTAT_ACTIVATE
-	  
-} 
+func ( hsa HsmActorBase) setLastState ( state int ) { hsa.LastState = state }
 
-func ( hsa HsmActor) Live() ( exitstate int, err error) {
+func ( hsa HsmActorBase) getCurrentState () int {  return hsa.CurrentState }
+
+func ( hsa HsmActorBase) setCurrentState ( state int )  { hsa.CurrentState = state }
+
+func ( hsa HsmActorBase) Live() ( exitstate int, err error) {
 
 	if hsa.CurrentState == HSM_SYSSTAT_HIBERNATE { 
 	    hsa.CurrentState = HSM_SYSSTAT_POSTHIBERNATE 
@@ -54,7 +66,7 @@ func ( hsa HsmActor) Live() ( exitstate int, err error) {
 
 	for hsa.CurrentState != HSM_SYSSTAT_DEAD {
 	
-		fmt.Printf("The Current State of The World is:  %v \r\n", hsa.CurrentState )
+		fmt.Printf("\tThe Current State of The World is:  %v \r\n", hsa.CurrentState )
 		
 		hsa.CurrentState += 1
 		
@@ -63,6 +75,26 @@ func ( hsa HsmActor) Live() ( exitstate int, err error) {
 	return hsa.CurrentState, nil 
     
 } 
+
+//--- CreateActorBase ---------------------------------------------------------//	
+
+func  CreateActorBase() (HsmActorBase) {
+
+	hsa := 		HsmActorBase { HSM_SYSSTAT_NULL, HSM_SYSSTAT_ACTIVATE }	
+	return hsa
+} 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+///
+
+type HsmState interface {
+
+	AcceptState () int
+
+}
+
 
 
 //////

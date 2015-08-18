@@ -34,9 +34,13 @@ func main() {
         
         con = hsmproto.InitConnector()
 
-	fmt.Printf("Hello World !  MessageCls:  %v MessageType:  %v MessageCount: %v \r\n", con.MsgCls , con.MsgType, con.MsgCount )
+	fmt.Printf("\r\nHello World !  MessageCls:  %v MessageType:  %v MessageCount: %v \r\n\r\n", con.MsgCls , con.MsgType, con.MsgCount )
 	
-	fmt.Printf("THE END ! \r\n" )
+	hsa := hsmproto.CreateActorBase()   // hsmproto.HsmActor{ -5, -5 }
+	
+	hsa.Live()
+	
+	fmt.Printf("\r\nTHE END ! \r\n" )
 
 		
 }
