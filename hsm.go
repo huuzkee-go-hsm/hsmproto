@@ -80,7 +80,7 @@ type HSM interface {
 
 type MyHSM struct {
 
-	HsmEngine
+	HsmActor
 	
 	STATE_01 	State_01 
 	STATE_01_01 	State_01_01 
