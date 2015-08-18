@@ -1,5 +1,13 @@
 package hsmproto
 
+
+import (		
+		
+		"fmt"   
+
+)
+
+
 // SYSTEM STATE TOKENS ///////////////////////////////////////////////////////////
 
 const ( 
@@ -25,23 +33,34 @@ type HsmState interface {
 
 type HsmActor struct {
 
-	LastState 	:= HSM_SYSSTAT_NULL 
-	CurrentState 	:= HSM_SYSSTAT_NULL 
+	LastState 	int
+	CurrentState 	int
 	State		HsmState
 	
 }
 
-func ( hsmengine HsmActor) Live()  {
+func ( hsa HsmActor) Initialise()  {
 
-	LastState 	:= HSM_SYSSTAT_NULL
-	CurrentState	:= HSM_SYSSTAT_ACTIVATE
+	hsa.LastState 		= HSM_SYSSTAT_NULL
+	hsa.CurrentState	= HSM_SYSSTAT_ACTIVATE
+	  
+} 
+
+func ( hsa HsmActor) Live() ( exitstate int, err error) {
+
+	if hsa.CurrentState == HSM_SYSSTAT_HIBERNATE { 
+	    hsa.CurrentState = HSM_SYSSTAT_POSTHIBERNATE 
+	}
+
+	for hsa.CurrentState != HSM_SYSSTAT_DEAD {
 	
-	for CurrentState != HSM_SYSSTAT_DEAD {
-	
-		CurrentState += 1
+		fmt.Printf("The Current State of The World is:  %v \r\n", hsa.CurrentState )
+		
+		hsa.CurrentState += 1
 		
 	}
 
+	return hsa.CurrentState, nil 
     
 } 
 
