@@ -1,18 +1,13 @@
 package hsmproto
 
 type State_01_01 struct {
-
 }
 
-
-func ( s11 State_01_01 ) Listen () int {
+func (s11 State_01_01) Listen() int {
 
 	for {
 
-
-
 	}
 
-
-    return 88
+	return 88
 }

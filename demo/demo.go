@@ -1,9 +1,8 @@
 package main
 
-import (		
-		
-		"fmt"   
-		"github.com/huuzkee-go-hsm/hsmproto"
+import (
+	"fmt"
+	"github.com/huuzkee-go-hsm/hsmproto"
 )
 
 //var rootDir string = "./testData"
@@ -30,18 +29,16 @@ func main() {
 		encrypt := *encrptPtr
 	*/ //I am not including bakcup run time since
 
-        var con hsmproto.Connector
-        
-        con = hsmproto.InitConnector()
+	var con hsmproto.Connector
 
-	fmt.Printf("\r\nHello World !  MessageCls:  %v MessageType:  %v MessageCount: %v \r\n\r\n", con.MsgCls , con.MsgType, con.MsgCount )
-	
-	hsa := hsmproto.CreateActorBase()   // hsmproto.HsmActor{ -5, -5 }
-	
+	con = hsmproto.InitConnector()
+
+	fmt.Printf("\r\nHello World !  MessageCls:  %v MessageType:  %v MessageCount: %v \r\n\r\n", con.MsgCls, con.MsgType, con.MsgCount)
+
+	hsa := hsmproto.CreateActorBase() // hsmproto.HsmActor{ -5, -5 }
+
 	hsa.Live()
-	
-	fmt.Printf("\r\nTHE END ! \r\n" )
 
-		
+	fmt.Printf("\r\nTHE END ! \r\n")
+
 }
-
