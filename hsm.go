@@ -4,7 +4,12 @@ package hsmproto
 
 const ( 
  	HSM_SYSSTAT_NULL     = (0 + iota)		// NULL PSEUDO STATE
+ 	HSM_SYSSTAT_ACTIVATE				// NULL PSEUDO STATE
  	HSM_SYSSTAT_LIVE				// NULL PSEUDO STATE
+ 	HSM_SYSSTAT_PREHIBERNATE			// NULL PSEUDO STATE
+ 	HSM_SYSSTAT_HIBERNATE				// NULL PSEUDO STATE
+ 	HSM_SYSSTAT_POSTHIBERNATE			// NULL PSEUDO STATE
+ 	HSM_SYSSTAT_DEACTIVATE 			      	// NULL PSEUDO STATE
  	HSM_SYSSTAT_DEAD 			      	// NULL PSEUDO STATE
  	HSM_SYSSTAT_USER		      		// NULL PSEUDO STATE
 )
@@ -20,15 +25,16 @@ type HsmState interface {
 
 type HsmActor struct {
 
-	LastState 	HsmState 
-	CurrentState 	HsmState 
+	LastState 	:= HSM_SYSSTAT_NULL 
+	CurrentState 	:= HSM_SYSSTAT_NULL 
+	State		HsmState
 	
 }
 
 func ( hsmengine HsmActor) Live()  {
 
 	LastState 	:= HSM_SYSSTAT_NULL
-	CurrentState	:= HSM_SYSSTAT_NULL
+	CurrentState	:= HSM_SYSSTAT_ACTIVATE
 	
 	for CurrentState != HSM_SYSSTAT_DEAD {
 	
@@ -84,8 +90,6 @@ type State struct {
 //////////////////////////////////////////////////////////////////////////////
 
 /*
- 	HSM_SYSSTAT_ACTIVATE				// NULL PSEUDO STATE
- 	HSM_SYSSTAT_DEACTIVATE 			      	// NULL PSEUDO STATE
 
  	//------------------------------------------------------------------
  	HSM_SYSSTAT_INITIALISING	        	// NULL PSEUDO STATE
