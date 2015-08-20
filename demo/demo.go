@@ -37,7 +37,7 @@ func main() {
 
 	hsa := hsmproto.Create_MyActor()
 
-	hsa.GoLive()
+	hsa.GoLive(&hsa)
 
 	fmt.Printf("\r\nTHE END ! \r\n")
 
