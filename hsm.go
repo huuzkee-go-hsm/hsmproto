@@ -35,6 +35,23 @@ const (
 // INTERFACES ///////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
+type Shower interface {
+	Show()
+}
+
+type S1 struct {
+}
+
+func (this *S1) Show() {
+	println("Show from S1")
+}
+
+func InvokeShow(s Shower) {
+	if s1, ok := s.(*S1); ok {
+		s1.Show()
+	}
+}
+
 type HsmState interface {
 	acceptState(layer *HsmActorLayer) int
 	getState() int
@@ -45,9 +62,9 @@ type HsmState interface {
 
 type HsmActorLayerStateFrame interface {
 	getLastState() int
-	setLastState(state int)
+
 	getCurrentState() int
-	setCurrentState(state int)
+
 	getStates() []HsmState
 
 	initFrame(minState int, maxState int) error
@@ -58,6 +75,7 @@ type HsmActorLayerStateFrame interface {
 type HsmActor interface {
 	//GoLive() (exitstate int, err error)
 	getUserLayerSegment(seg int) HsmActorUserLayer
+	getBaseLayer() HsmActorBaseLayer
 }
 
 //--- HsmActorLayer-----------------------------------------------------------//
@@ -66,6 +84,10 @@ type HsmActorLayer interface {
 	HsmActorLayerStateFrame
 	Live(layer *HsmActorLayer) (exitstate int, err error)
 	getActor() *HsmActor
+
+	//setLastState(state int)
+	//setCurrentState(state int)
+
 	//setActor(actor *HsmActor)
 }
 
@@ -84,11 +106,11 @@ type HsmActorBaseLayer struct {
 
 func (hsa HsmActorBaseLayer) getLastState() int { return hsa.LastState }
 
-func (hsa HsmActorBaseLayer) setLastState(state int) { hsa.LastState = state }
+func (this *HsmActorBaseLayer) setLastState(state int) { this.LastState = state }
 
 func (hsa HsmActorBaseLayer) getCurrentState() int { return hsa.CurrentState }
 
-func (hsa HsmActorBaseLayer) setCurrentState(state int) { hsa.CurrentState = state }
+func (this *HsmActorBaseLayer) setCurrentState(state int) { this.CurrentState = state }
 
 func (hsa HsmActorBaseLayer) getActor() *HsmActor {
 	//fmt.Printf("\tx2:  \r\n")
@@ -123,23 +145,41 @@ func (hsa HsmActorBaseLayer) getStates() []HsmState { return hsa.States }
 
 func (hsa HsmActorBaseLayer) Live(layer *HsmActorLayer) (exitstate int, err error) {
 
-	m1 := *layer // actorp := m1.getActor() ; actor := *actorp ; //ul := actor.getUserLayerSegment(HSM_SYSSTAT_LIVE) ;
+	m1 := *layer
+	actorp := m1.getActor()
+	actor := *actorp //ul := actor.getUserLayerSegment(HSM_SYSSTAT_LIVE) ;
 	st := m1.getStates()
 	cs := st[m1.getCurrentState()]
+	bl := actor.getBaseLayer()
 
 	if m1.getCurrentState() == HSM_SYSSTAT_HIBERNATE {
-		m1.setCurrentState(HSM_SYSSTAT_POSTHIBERNATE)
+		bl.setCurrentState(HSM_SYSSTAT_POSTHIBERNATE)
 	}
 
-	hsal := HsmActorLayer(hsa)
+	hsal := HsmActorLayer(m1)
 
 	hsal.getActor()
 
+	lcount := 0
+
 	for m1.getCurrentState() != HSM_SYSSTAT_DEAD {
+
+		cs = st[m1.getCurrentState()]
 
 		fmt.Printf("\tThe Current State of The World is:  # %v  %v \r\n", m1.getCurrentState(), cs.describeState())
 
-		m1.setCurrentState(cs.acceptState(&hsal))
+		fmt.Printf("\tThe pending State of The World is:  # %v   \r\n", cs.acceptState(&m1))
+
+		bl.setCurrentState(cs.acceptState(&m1))
+
+		fmt.Printf("\tThe Next State of The World is:  # %v  %v \r\n", m1.getCurrentState(), cs.describeState())
+
+		if m1.getCurrentState() == HSM_SYSSTAT_ACTIVATE {
+			lcount++
+			if lcount > 2 {
+				return m1.getCurrentState(), nil
+			}
+		}
 
 	}
 
@@ -207,9 +247,11 @@ func (hst hsm_systat_LIVE) acceptState(layer *HsmActorLayer) int {
 	m1 := *layer
 	actorp := m1.getActor()
 	actor := *actorp
+	bl := actor.getBaseLayer()
+
 	ul := actor.getUserLayerSegment(HSM_SYSSTAT_LIVE)
 	st := m1.getStates()
-	cs := st[m1.getCurrentState()]
+	cs := st[bl.getCurrentState()]
 
 	fmt.Printf("\tThe Current State of The World is:  # %v  %v \r\n", m1.getCurrentState(), cs.describeState())
 
@@ -223,13 +265,13 @@ func (hst hsm_systat_LIVE) acceptState(layer *HsmActorLayer) int {
 	for ul.CurrentState < HSM_USRSTAT_EXIT {
 
 		if ul.LastState != ul.CurrentState {
-			if m1.getLastState() != HSM_SYSSTAT_EXITHIERARCHY {
-				m1.setLastState(m1.getCurrentState())
-				m1.setCurrentState(HSM_SYSSTAT_EXITHIERARCHY)
+			if bl.getLastState() != HSM_SYSSTAT_EXITHIERARCHY {
+				bl.setLastState(bl.getCurrentState())
+				bl.setCurrentState(HSM_SYSSTAT_EXITHIERARCHY)
 				return HSM_SYSSTAT_EXITHIERARCHY
 			} else {
-				m1.setLastState(m1.getCurrentState())
-				m1.setCurrentState(HSM_SYSSTAT_ENTERHIERARCHY)
+				bl.setLastState(m1.getCurrentState())
+				bl.setCurrentState(HSM_SYSSTAT_ENTERHIERARCHY)
 				return HSM_SYSSTAT_ENTERHIERARCHY
 			}
 
@@ -246,9 +288,9 @@ func (hst hsm_systat_LIVE) acceptState(layer *HsmActorLayer) int {
 
 		if retval != HSM_SYSSTAT_NULL {
 
-			m1.setLastState(m1.getCurrentState())
-			m1.setCurrentState(retval)
-			return m1.getCurrentState()
+			bl.setLastState(m1.getCurrentState())
+			bl.setCurrentState(retval)
+			return bl.getCurrentState()
 		}
 
 	}
@@ -533,11 +575,11 @@ type HsmActorUserLayer struct {
 
 func (hsa HsmActorUserLayer) getLastState() int { return hsa.LastState }
 
-func (hsa HsmActorUserLayer) setLastState(state int) { hsa.LastState = state }
+func (this *HsmActorUserLayer) setLastState(state int) { this.LastState = state }
 
 func (hsa HsmActorUserLayer) getCurrentState() int { return hsa.CurrentState }
 
-func (hsa HsmActorUserLayer) setCurrentState(state int) { hsa.CurrentState = state }
+func (this *HsmActorUserLayer) setCurrentState(state int) { this.CurrentState = state }
 
 func (hsa HsmActorUserLayer) getActor() *HsmActor {
 	//fmt.Printf("\ty2:  \r\n")
@@ -605,7 +647,8 @@ func (hsa *MyActor) GoLive() (exitstate int, err error) {
 
 	//fmt.Printf("\r\ngolive 1 \r\n")
 
-	hbl := hsa.BaseLayer
+	hsap := *hsa
+	hbl := hsap.BaseLayer
 
 	lay := HsmActorLayer(hbl)
 
@@ -619,6 +662,10 @@ func (hsa *MyActor) GoLive() (exitstate int, err error) {
 
 func (hsa MyActor) getUserLayerSegment(seg int) HsmActorUserLayer {
 	return hsa.UserLayer[seg]
+}
+
+func (hsa MyActor) getBaseLayer() HsmActorBaseLayer {
+	return hsa.BaseLayer
 }
 
 func Create_MyActor() MyActor {
