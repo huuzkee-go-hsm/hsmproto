@@ -9,26 +9,26 @@ import (
 /////////////////////////////////////////////////////////////////////////////////
 
 const (
-	HSM_SYSSTAT_NULL          = (0 + iota) // NULL PSEUDO STATE
-	HSM_SYSSTAT_ACTIVATE                   // NULL PSEUDO STATE
-	HSM_SYSSTAT_LIVE                       // NULL PSEUDO STATE
-	HSM_SYSSTAT_DEBUG                      // NULL PSEUDO STATE
-	HSM_SYSSTAT_PREHIBERNATE               // NULL PSEUDO STATE
-	HSM_SYSSTAT_HIBERNATE                  // NULL PSEUDO STATE
-	HSM_SYSSTAT_POSTHIBERNATE              // NULL PSEUDO STATE
-	HSM_SYSSTAT_DEACTIVATE                 // NULL PSEUDO STATE
-	HSM_SYSSTAT_FINALISED                  		// NULL PSEUDO STATE	
-	HSM_SYSSTAT_INITHSM                    		// NULL PSEUDO STATE
-	HSM_SYSSTAT_ENTERHIERARCHY             		// NULL PSEUDO STATE
-	HSM_SYSSTAT_EXITHIERARCHY              		// NULL PSEUDO STATE
-	HSM_SYSSTAT_BLOCKING                   		// NULL PSEUDO STATE
-	HSM_SYSSTAT_EXPORTING	               		// NULL PSEUDO STATE
-	HSM_SYSSTAT_IMPORTING	               		// NULL PSEUDO STATE
-	HSM_SYSSTAT_REGENERATING               		// NULL PSEUDO STATE
-	HSM_SYSSTAT_DEBUGSTEP                  		// NULL PSEUDO STATE
-	HSM_SYSSTAT_DEBUGTRACE                 		// NULL PSEUDO STATE
-	HSM_SYSSTAT_DEAD                       // NULL PSEUDO STATE
-	HSM_SYSSTAT_USER                       // NULL PSEUDO STATE
+	HSM_SYSSTAT_NULL           = (0 + iota) // NULL PSEUDO STATE
+	HSM_SYSSTAT_ACTIVATE                    // NULL PSEUDO STATE
+	HSM_SYSSTAT_LIVE                        // NULL PSEUDO STATE
+	HSM_SYSSTAT_DEBUG                       // NULL PSEUDO STATE
+	HSM_SYSSTAT_PREHIBERNATE                // NULL PSEUDO STATE
+	HSM_SYSSTAT_HIBERNATE                   // NULL PSEUDO STATE
+	HSM_SYSSTAT_POSTHIBERNATE               // NULL PSEUDO STATE
+	HSM_SYSSTAT_DEACTIVATE                  // NULL PSEUDO STATE
+	HSM_SYSSTAT_FINALISED                   // NULL PSEUDO STATE
+	HSM_SYSSTAT_INITHSM                     // NULL PSEUDO STATE
+	HSM_SYSSTAT_ENTERHIERARCHY              // NULL PSEUDO STATE
+	HSM_SYSSTAT_EXITHIERARCHY               // NULL PSEUDO STATE
+	HSM_SYSSTAT_BLOCKING                    // NULL PSEUDO STATE
+	HSM_SYSSTAT_EXPORTING                   // NULL PSEUDO STATE
+	HSM_SYSSTAT_IMPORTING                   // NULL PSEUDO STATE
+	HSM_SYSSTAT_REGENERATING                // NULL PSEUDO STATE
+	HSM_SYSSTAT_DEBUGSTEP                   // NULL PSEUDO STATE
+	HSM_SYSSTAT_DEBUGTRACE                  // NULL PSEUDO STATE
+	HSM_SYSSTAT_DEAD                        // NULL PSEUDO STATE
+	HSM_SYSSTAT_USER                        // NULL PSEUDO STATE
 )
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -104,9 +104,9 @@ func (hsa HsmActorBase) Live() (exitstate int, err error) {
 
 type hsm_systat_NULL struct{}
 
-func (hst hsm_systat_NULL) acceptState() int { return HSM_SYSSTAT_ACTIVATE }
-func (hst hsm_systat_NULL) getState() int    { return HSM_SYSSTAT_NULL }
-func (hst hsm_systat_NULL) describeState() string    { return "HSM_SYSSTAT_NULL" }
+func (hst hsm_systat_NULL) acceptState() int      { return HSM_SYSSTAT_ACTIVATE }
+func (hst hsm_systat_NULL) getState() int         { return HSM_SYSSTAT_NULL }
+func (hst hsm_systat_NULL) describeState() string { return "HSM_SYSSTAT_NULL" }
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 //--- hsm_systat_ACTIVATE -----------------------------------------------------//
@@ -123,15 +123,15 @@ type hsm_systat_LIVE struct{}
 
 func (hst hsm_systat_LIVE) acceptState() int { return HSM_SYSSTAT_DEBUG }
 func (hst hsm_systat_LIVE) getState() int    { return HSM_SYSSTAT_LIVE }
-	
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 //--- hsm_systat_DEBUG ---------------------------------------------------------//
 
 type hsm_systat_DEBUG struct{}
 
 func (hst hsm_systat_DEBUG) acceptState() int { return HSM_SYSSTAT_PREHIBERNATE }
-func (hst hsm_systat_DEBUG) getState() int    { return HSM_SYSSTAT_DEBUG }	
-	
+func (hst hsm_systat_DEBUG) getState() int    { return HSM_SYSSTAT_DEBUG }
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 //--- hsm_systat_PREHIBERNATE -------------------------------------------------//
 
@@ -177,24 +177,24 @@ func (hst hsm_systat_FINALISED) getState() int    { return HSM_SYSSTAT_FINALISED
 
 type hsm_systat_INITHSM struct{}
 
-func (hst hsm_systat_INITHSM) acceptState() int { return HSM_SYSSTAT_ENTERHIERARCHY  }
+func (hst hsm_systat_INITHSM) acceptState() int { return HSM_SYSSTAT_ENTERHIERARCHY }
 func (hst hsm_systat_INITHSM) getState() int    { return HSM_SYSSTAT_INITHSM }
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 //--- hsm_systat_ENTERHIERARCHY   ---------------------------------------------//
 
-type hsm_systat_ENTERHIERARCHY  struct{}
+type hsm_systat_ENTERHIERARCHY struct{}
 
-func (hst hsm_systat_ENTERHIERARCHY ) acceptState() int { return HSM_SYSSTAT_EXITHIERARCHY  }
-func (hst hsm_systat_ENTERHIERARCHY ) getState() int    { return HSM_SYSSTAT_ENTERHIERARCHY  }
+func (hst hsm_systat_ENTERHIERARCHY) acceptState() int { return HSM_SYSSTAT_EXITHIERARCHY }
+func (hst hsm_systat_ENTERHIERARCHY) getState() int    { return HSM_SYSSTAT_ENTERHIERARCHY }
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 //--- hsm_systat_EXITHIERARCHY   ----------------------------------------------//
 
-type hsm_systat_EXITHIERARCHY  struct{}
+type hsm_systat_EXITHIERARCHY struct{}
 
-func (hst hsm_systat_EXITHIERARCHY ) acceptState() int { return HSM_SYSSTAT_BLOCKING  }
-func (hst hsm_systat_EXITHIERARCHY ) getState() int    { return HSM_SYSSTAT_EXITHIERARCHY  }
+func (hst hsm_systat_EXITHIERARCHY) acceptState() int { return HSM_SYSSTAT_BLOCKING }
+func (hst hsm_systat_EXITHIERARCHY) getState() int    { return HSM_SYSSTAT_EXITHIERARCHY }
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 //--- hsm_systat_BLOCKING  ---------------------------------------------------------//
@@ -217,7 +217,7 @@ func (hst hsm_systat_EXPORTING) getState() int    { return HSM_SYSSTAT_EXPORTING
 
 type hsm_systat_IMPORTING struct{}
 
-func (hst hsm_systat_IMPORTING) acceptState() int { return HSM_SYSSTAT_REGENERATING  }
+func (hst hsm_systat_IMPORTING) acceptState() int { return HSM_SYSSTAT_REGENERATING }
 func (hst hsm_systat_IMPORTING) getState() int    { return HSM_SYSSTAT_IMPORTING }
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -261,10 +261,21 @@ func CreateActorBase() HsmActorBase {
 	states[HSM_SYSSTAT_NULL] = hsm_systat_NULL{}
 	states[HSM_SYSSTAT_ACTIVATE] = hsm_systat_ACTIVATE{}
 	states[HSM_SYSSTAT_LIVE] = hsm_systat_LIVE{}
+	states[HSM_SYSSTAT_LIVE] = hsm_systat_LIVE{}
 	states[HSM_SYSSTAT_PREHIBERNATE] = hsm_systat_PREHIBERNATE{}
 	states[HSM_SYSSTAT_HIBERNATE] = hsm_systat_HIBERNATE{}
 	states[HSM_SYSSTAT_POSTHIBERNATE] = hsm_systat_POSTHIBERNATE{}
 	states[HSM_SYSSTAT_DEACTIVATE] = hsm_systat_DEACTIVATE{}
+	states[HSM_SYSSTAT_FINALISED] = hsm_systat_FINALISED{}
+	states[HSM_SYSSTAT_INITHSM] = hsm_systat_INITHSM{}
+	states[HSM_SYSSTAT_ENTERHIERARCHY] = hsm_systat_ENTERHIERARCHY{}
+	states[HSM_SYSSTAT_EXITHIERARCHY] = hsm_systat_EXITHIERARCHY{}
+	states[HSM_SYSSTAT_BLOCKING] = hsm_systat_BLOCKING{}
+	states[HSM_SYSSTAT_EXPORTING] = hsm_systat_EXPORTING{}
+	states[HSM_SYSSTAT_IMPORTING] = hsm_systat_IMPORTING{}
+	states[HSM_SYSSTAT_REGENERATING] = hsm_systat_REGENERATING{}
+	states[HSM_SYSSTAT_DEBUGSTEP] = hsm_systat_DEBUGSTEP{}
+	states[HSM_SYSSTAT_DEBUGTRACE] = hsm_systat_DEBUGTRACE{}
 	states[HSM_SYSSTAT_DEAD] = hsm_systat_DEAD{}
 
 	hsa := HsmActorBase{HSM_SYSSTAT_NULL, HSM_SYSSTAT_ACTIVATE, states}
