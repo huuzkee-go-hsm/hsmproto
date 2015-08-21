@@ -166,20 +166,23 @@ func (hsa HsmActorBaseLayer) Live(layer *HsmActorLayer) (exitstate int, err erro
 
 	for bl.getCurrentState() != HSM_SYSSTAT_DEAD {
 
-		cs = st[bl.getCurrentState()]
 		abl = HsmActorLayer(bl)
 
-		fmt.Printf("\tThe Current State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
+		st = bl.getStates()
+		cs = st[bl.getCurrentState()]
+		fmt.Printf("\tBL LIVE 01 The Current State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
 
-		fmt.Printf("\tThe pending State of The World is:  # %v   \r\n", cs.acceptState(&abl))
+		//fmt.Printf("\tBL LIVE 02 The pending State of The World is:  # %v   \r\n", cs.acceptState(&abl))
 
 		bl.setCurrentState(cs.acceptState(&abl))
+		st = bl.getStates()
+		cs = st[bl.getCurrentState()]
 
-		fmt.Printf("\tThe Next State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
+		fmt.Printf("\tBL LIVE 03 The Next State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
 
 		if bl.getCurrentState() == HSM_SYSSTAT_LIVE {
 			lcount++
-			if lcount > 2 {
+			if lcount > 5 {
 				return bl.getCurrentState(), nil
 			}
 		}
@@ -267,34 +270,43 @@ func (hst hsm_systat_LIVE) acceptState(layer *HsmActorLayer) int {
 	st := m1.getStates()
 	cs := st[bl.getCurrentState()]
 
-	fmt.Printf("\tThe Current State of The World is:  # %v  %v \r\n", m1.getCurrentState(), cs.describeState())
+	fmt.Printf("\tThe STATE LIVE 01 Current State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
 
 	if ul.CurrentState < HSM_USRSTAT_ENTER {
 		return HSM_SYSSTAT_DEBUG
 	}
 
 	var retval int
-	//var ucheck HsmActorLayer{} = m1 ;
+
+	st = ul.getStates()
+	cs = st[ul.getCurrentState()]
+	fmt.Printf("\t STATE LIVE 02 The UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
 
 	for ul.CurrentState < HSM_USRSTAT_EXIT {
 
 		if ul.LastState != ul.CurrentState {
-			if bl.getLastState() != HSM_SYSSTAT_EXITHIERARCHY {
+
+			if bl.getLastState() != HSM_SYSSTAT_ENTERHIERARCHY {
 				bl.setLastState(bl.getCurrentState())
 				bl.setCurrentState(HSM_SYSSTAT_EXITHIERARCHY)
+
+				st = bl.getStates()
+				cs = st[bl.getCurrentState()]
+				fmt.Printf("\t STATE LIVE 03a The Current State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
+				st = ul.getStates()
+				cs = st[ul.getCurrentState()]
+				fmt.Printf("\t STATE LIVE 03b The UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
+
 				return HSM_SYSSTAT_EXITHIERARCHY
-			} else {
-				bl.setLastState(m1.getCurrentState())
-				bl.setCurrentState(HSM_SYSSTAT_ENTERHIERARCHY)
-				return HSM_SYSSTAT_ENTERHIERARCHY
 			}
 
+			fmt.Printf("\t STATE LIVE 04 The Current State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
 		}
 
-		st := m1.getStates()
-		cs := st[m1.getCurrentState()]
+		st = bl.getStates()
+		cs = st[bl.getCurrentState()]
 
-		fmt.Printf("\tThe Current State of The World is:  # %v  %v \r\n", m1.getCurrentState(), cs.describeState())
+		fmt.Printf("\t STATE LIVE 05 tzzzzzThe Current State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
 
 		uref := HsmActorLayer(ul)
 
@@ -372,7 +384,7 @@ func (hst hsm_systat_DEACTIVATE) describeState() string                { return 
 type hsm_systat_INITHSM struct{}
 
 func (hst hsm_systat_INITHSM) acceptState(layer *HsmActorLayer) int {
-	return HSM_SYSSTAT_ENTERHIERARCHY
+	return HSM_SYSSTAT_BLOCKING
 }
 func (hst hsm_systat_INITHSM) getState() int         { return HSM_SYSSTAT_INITHSM }
 func (hst hsm_systat_INITHSM) describeState() string { return "HSM_SYSSTAT_INITHSM" }
@@ -383,7 +395,22 @@ func (hst hsm_systat_INITHSM) describeState() string { return "HSM_SYSSTAT_INITH
 type hsm_systat_ENTERHIERARCHY struct{}
 
 func (hst hsm_systat_ENTERHIERARCHY) acceptState(layer *HsmActorLayer) int {
-	return HSM_SYSSTAT_EXITHIERARCHY
+	m1 := *layer
+	actorp := m1.getActor()
+	actor := *actorp
+	bl := actor.getBaseLayer() //ul := actor.getUserLayerSegment(HSM_SYSSTAT_LIVE)
+	st := m1.getStates()
+	cs := st[bl.getCurrentState()]
+
+	fmt.Printf("\tThe enter 01 ####Current State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
+
+	bl.setLastState(bl.getCurrentState())
+	bl.setCurrentState(HSM_SYSSTAT_LIVE)
+
+	cs = st[bl.getLastState()]
+	fmt.Printf("\tThe enter 02 ####last State of The World is:  # %v  %v \r\n", bl.getLastState(), cs.describeState())
+
+	return HSM_SYSSTAT_LIVE
 }
 func (hst hsm_systat_ENTERHIERARCHY) getState() int         { return HSM_SYSSTAT_ENTERHIERARCHY }
 func (hst hsm_systat_ENTERHIERARCHY) describeState() string { return "HSM_SYSSTAT_ENTERHIERARCHY" }
@@ -394,7 +421,22 @@ func (hst hsm_systat_ENTERHIERARCHY) describeState() string { return "HSM_SYSSTA
 type hsm_systat_EXITHIERARCHY struct{}
 
 func (hst hsm_systat_EXITHIERARCHY) acceptState(layer *HsmActorLayer) int {
-	return HSM_SYSSTAT_BLOCKING
+	m1 := *layer
+	actorp := m1.getActor()
+	actor := *actorp
+	bl := actor.getBaseLayer() //ul := actor.getUserLayerSegment(HSM_SYSSTAT_LIVE)
+	st := m1.getStates()
+	cs := st[bl.getCurrentState()]
+
+	fmt.Printf("\tThe exit 01 Current State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
+
+	bl.setLastState(bl.getCurrentState())
+	bl.setCurrentState(HSM_SYSSTAT_ENTERHIERARCHY)
+
+	cs = st[bl.getLastState()]
+	fmt.Printf("\tThe exit 02 Last State of The World is:  # %v  %v \r\n", bl.getLastState(), cs.describeState())
+
+	return HSM_SYSSTAT_ENTERHIERARCHY
 }
 func (hst hsm_systat_EXITHIERARCHY) getState() int         { return HSM_SYSSTAT_EXITHIERARCHY }
 func (hst hsm_systat_EXITHIERARCHY) describeState() string { return "HSM_SYSSTAT_EXITHIERARCHY" }
