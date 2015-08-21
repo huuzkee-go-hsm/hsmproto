@@ -303,18 +303,22 @@ func (hst hsm_systat_LIVE) acceptState(layer *HsmActorLayer) int {
 			fmt.Printf("\t STATE LIVE 04 The Current State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
 		}
 
-		st = bl.getStates()
-		cs = st[bl.getCurrentState()]
+		st = ul.getStates()
+		cs = st[ul.getCurrentState()]
 
-		fmt.Printf("\t STATE LIVE 05 tzzzzzThe Current State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
+		fmt.Printf("\t STATE LIVE 05a The UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
 
 		uref := HsmActorLayer(ul)
 
+		fmt.Printf("\t STATE LIVE 05b The UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
+
 		retval = cs.acceptState(&uref)
+
+		fmt.Printf("\t STATE LIVE 05c RETVAL is:  # %v  \r\n", retval)
 
 		if retval != HSM_SYSSTAT_NULL {
 
-			bl.setLastState(m1.getCurrentState())
+			bl.setLastState(bl.getCurrentState())
 			bl.setCurrentState(retval)
 			return bl.getCurrentState()
 		}
