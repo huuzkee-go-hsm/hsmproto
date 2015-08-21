@@ -280,47 +280,59 @@ func (hst hsm_systat_LIVE) acceptState(layer *HsmActorLayer) int {
 
 	st = ul.getStates()
 	cs = st[ul.getCurrentState()]
-	fmt.Printf("\t STATE LIVE 02 The UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
+	fmt.Printf("\t STATE LIVE 01 The PRE UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
+	cs = st[ul.getLastState()]
+	fmt.Printf("\t STATE LIVE 01 The PRE UL Last State of The World is:  # %v  %v \r\n", ul.getLastState(), cs.describeState())
 
 	for ul.CurrentState < HSM_USRSTAT_EXIT {
 
-		if ul.LastState != ul.CurrentState {
-
-			if bl.getLastState() != HSM_SYSSTAT_ENTERHIERARCHY {
-				bl.setLastState(bl.getCurrentState())
-				bl.setCurrentState(HSM_SYSSTAT_EXITHIERARCHY)
-
-				st = bl.getStates()
-				cs = st[bl.getCurrentState()]
-				fmt.Printf("\t STATE LIVE 03a The Current State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
-				st = ul.getStates()
-				cs = st[ul.getCurrentState()]
-				fmt.Printf("\t STATE LIVE 03b The UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
-
-				return HSM_SYSSTAT_EXITHIERARCHY
-			}
-
-			fmt.Printf("\t STATE LIVE 04 The Current State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
-		}
-
-		st = ul.getStates()
-		cs = st[ul.getCurrentState()]
-
-		fmt.Printf("\t STATE LIVE 05a The UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
-
-		uref := HsmActorLayer(ul)
-
-		fmt.Printf("\t STATE LIVE 05b The UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
-
-		retval = cs.acceptState(&uref)
-
-		fmt.Printf("\t STATE LIVE 05c RETVAL is:  # %v  \r\n", retval)
-
-		if retval != HSM_SYSSTAT_NULL {
+		if ul.getLastState() != ul.getCurrentState() {
 
 			bl.setLastState(bl.getCurrentState())
-			bl.setCurrentState(retval)
-			return bl.getCurrentState()
+			bl.setCurrentState(HSM_SYSSTAT_EXITHIERARCHY)
+
+			st = bl.getStates()
+			cs = st[bl.getCurrentState()]
+			ul.setLastState(ul.getCurrentState())
+
+			fmt.Printf("\t STATE LIVE 03a The Current State of The World is:  # %v  %v \r\n", bl.getCurrentState(), cs.describeState())
+			st = ul.getStates()
+			cs = st[ul.getCurrentState()]
+			fmt.Printf("\t STATE LIVE 03b The UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
+
+			cs = st[ul.getCurrentState()]
+			fmt.Printf("\t STATE LIVE 04 The FINAL UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
+			cs = st[ul.getLastState()]
+			fmt.Printf("\t STATE LIVE 04 The FINAL UL Last State of The World is:  # %v  %v \r\n", ul.getLastState(), cs.describeState())
+
+			return HSM_SYSSTAT_EXITHIERARCHY
+
+		} else {
+
+			st = ul.getStates()
+			cs = st[ul.getCurrentState()]
+
+			fmt.Printf("\t STATE LIVE 05a The UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
+
+			uref := HsmActorLayer(ul)
+
+			fmt.Printf("\t STATE LIVE 05b The UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
+
+			retval = cs.acceptState(&uref)
+
+			fmt.Printf("\t STATE LIVE 05c RETVAL is:  # %v  \r\n", retval)
+
+			ul.setLastState(ul.getCurrentState())
+			ul.setCurrentState(retval)
+
+			cs = st[ul.getCurrentState()]
+			fmt.Printf("\t STATE LIVE 06 The FINAL UL Current State of The World is:  # %v  %v \r\n", ul.getCurrentState(), cs.describeState())
+			cs = st[ul.getLastState()]
+			fmt.Printf("\t STATE LIVE 06 The FINAL UL Last State of The World is:  # %v  %v \r\n", ul.getLastState(), cs.describeState())
+
+			//if retval == HSM_SYSSTAT_NULL {
+			//	return HSM_SYSSTAT_LIVE
+			//}
 		}
 
 	}
